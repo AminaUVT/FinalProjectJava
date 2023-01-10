@@ -2,8 +2,11 @@ package com.amina.entities;
 
 public class Customer extends User {
 
-    public Customer(int user_id, String username, String password) {
-        super(user_id, username, password);
+    public Customer(String username, String password) {
+        super(0, username, password);
     }
 
+    public Customer() {
+
+    }
 }

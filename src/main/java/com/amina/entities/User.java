@@ -5,6 +5,11 @@ public class User extends Entity {
     protected String username;
     protected String password;
 
+
+
+    public User() {
+    }
+
     public User(int user_id, String username, String password) {
         this.user_id = user_id;
         this.username = username;
@@ -22,5 +27,17 @@ public class User extends Entity {
 
     public String getPassword() {
         return password;
+    }
+
+    public void setUser_id(int user_id) {
+        this.user_id = user_id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
