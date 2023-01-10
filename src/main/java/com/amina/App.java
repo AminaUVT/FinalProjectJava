@@ -76,7 +76,7 @@ public class App {
 
             } catch (LoginException e) {
                 e.printStackTrace();
-                cntTries++; // each login error means that the user credentials were wrong :).
+                cntTries++; // each login error means that the user credentials were wrong
                 if (cntTries == 3) {
                     System.out.println("Because you failed logging in for three consecutive attempts, the application stopped!");
                     return;

@@ -38,6 +38,7 @@ public class AdminMenu extends Menu {
         System.out.println("18. Read Customer");
         System.out.println("19. Update Customer");
         System.out.println("20. Delete Customer");
+        System.out.println("21. Exit");
 
     }
 
@@ -48,16 +49,14 @@ public class AdminMenu extends Menu {
 
         while (true)
             try {
-                return id.inputValueInRange(1, 4, "Please choose option between 1 and 4: ");
+                return id.inputValueInRange(1, 21, "Please choose option between 1 and 21: ");
             } catch (InputDevice.ValueOutOfRange e) {
-                e.printStackTrace();
+                e.printStackTrace(); 
             }
     }
 
     @Override
     public void run() {
-
-
         try {
             this.db = new Database();
         } catch (Database.DbConnectionError e) {
@@ -81,7 +80,6 @@ public class AdminMenu extends Menu {
                     deleteCustomer();
                     break;
                 default:
-                    // stop the menu
                     return;
             }
         }
@@ -101,7 +99,7 @@ public class AdminMenu extends Menu {
 
         try {
             // print all data before to update
-            int index = id.inputValueInRange(0, db.customers().size() - 1, "Choose the index for the customer you want to delete");
+            int index = id.inputValueInRange(0, db.customers().size() - 1, "Choose the index for the customer you want to update");
             ID = db.customers().get(index).getUser_id();
             // functia din db, singura diferenta fata de deleteCustomer:
             Customer updatedCustomer = id.readCustomer();

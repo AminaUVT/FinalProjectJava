@@ -2,9 +2,14 @@ package com.amina.db;
 
 import com.amina.entities.*;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.ibatis.jdbc.ScriptRunner;
 
 public class Database {
     private static String DbConnectionUrl = "";
@@ -68,7 +73,7 @@ public class Database {
                 String customerPassword = admins.getString("password");
                 if (password != null && password.equals(customerPassword)) {
                     Admin admin = new Admin();
-//                    admin.setUser_id(admins.getInt("user_id"));
+//                    admin.setUser_id(admins.getInt("user_id")); 
                     admin.setPassword(admins.getString("password"));
                     admin.setUsername(admins.getString("username"));
                     return admin;
@@ -108,9 +113,54 @@ public class Database {
     // constructor:
     private Connection conn;
 
+    public static void createAndPopulateDb(String connUrl, String dbName) throws DbConnectionError, SQLException {
+        // Create Db:
+        try(Connection conn = DriverManager.getConnection(connUrl);
+            Statement stmt = conn.createStatement();
+        ) {
+            String sql = String.format("CREATE DATABASE %s", dbName);
+            stmt.executeUpdate(sql);
+            System.out.println("Database created successfully...");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        //Registering the Driver
+        DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+        //Getting the connection
+        String mysqlUrl = String.format("%s/%s", connUrl, dbName);
+        Connection con = DriverManager.getConnection(mysqlUrl, "root", "password");
+        System.out.println("Connection established......");
+        //Initialize the script runner
+        ScriptRunner sr = new ScriptRunner(con);
+        //Creating a reader object
+        Reader reader = null;
+        try {
+
+            String fileContents = Files.readString(Paths.get("book_and_tea.sql"))
+                    .replace("final_project", dbName);
+            // write to temp file
+            PrintWriter printWriter = new PrintWriter( new FileWriter("book_and_tea_tmp.sql"));
+            printWriter.print(fileContents);
+            printWriter.close();
+            // read from the temp file:
+            reader = new BufferedReader(new FileReader("book_and_tea_tmp.sql"));
+            //Running the script
+            sr.runScript(reader);
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void loadDb() throws DbConnectionError {
-        admins = new ArrayList<Admin>();
-        customers = new ArrayList<Customer>();
+        admins = new ArrayList<>();
+        customers = new ArrayList<>();
+        teas = new ArrayList<>();
+        books = new ArrayList<>();
+        orderItems = new ArrayList<>();
 
         Statement stmt = null;
         try {
@@ -142,6 +192,7 @@ public class Database {
                 customer.setPassword(rs.getString("password"));
                 customers.add(customer);
             }
+
 
 
         } catch (SQLException e) {
@@ -223,7 +274,7 @@ public class Database {
     // https://www.javatpoint.com/example-to-connect-to-the-mysql-database#:~:text=Connection%20URL%3A%20The%20connection%20URL,sonoo%20is%20the%20database%20name.
     public Database() throws DbConnectionError {
         try {
-            Class.forName("com.mysql.jdbc.Driver");
+            Class.forName("com.mysql.cj.jdbc.Driver");
             this.conn = DriverManager.getConnection(
                     Database.DbConnectionUrl
             );
@@ -309,7 +360,7 @@ public class Database {
             }
             stmt.close();
 
-           for (int i = 0; i < customers.size(); i++) {
+            for (int i = 0; i < customers.size(); i++) {
                 if (customers.get(i).getUser_id() == ID) {
                     customers.remove(i);
                     break;

@@ -17,15 +17,16 @@ public class InputDevice {
 
     public String inputString(String prompt) {
         System.out.print(prompt);
-        return scan.next();
+        return scan.nextLine();
     }
 
     public boolean inputBoolean(String message) {
         System.out.println(message);
-        return scan.nextBoolean();
+        return Boolean.parseBoolean(scan.nextLine());//
     }
 
-    // Exception class
+
+
     public static class ValueOutOfRange extends Exception {
         public ValueOutOfRange(String message) {
             super(message);
@@ -35,7 +36,7 @@ public class InputDevice {
     public int inputValueInRange(int a, int b, String msg) throws ValueOutOfRange {
         System.out.print(msg);
 
-        int choice = scan.nextInt();
+        int choice = Integer.parseInt(scan.nextLine());
 
         if (a <= choice && choice <= b) {
             return choice;
@@ -46,9 +47,9 @@ public class InputDevice {
 
     public Customer readCustomer() {
         System.out.print("username: ");
-        String username = scan.next(); // reads only one word, meaning that it stops on first whitespace
+        String username = scan.nextLine();
         System.out.print("password: ");
-        String password = scan.next(); // reads only one word, meaning that it stops on first whitespace
+        String password = scan.nextLine();
 
         return new Customer(username, password);
     }

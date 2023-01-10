@@ -1,7 +1,7 @@
 package com.amina;
 
 public class AdminMenu extends Menu {
-    // afiseaza optiunile
+    // show options
     public void showOptions() {
 
 
@@ -12,8 +12,7 @@ public class AdminMenu extends Menu {
 
 
     }
-    // alege o optiune
-    // (metoda asta ar putea fi pusa si la INputDevice())
+    // choose an option
     public int chooseOption() {
 
         while(true)
@@ -34,11 +33,11 @@ public class AdminMenu extends Menu {
                 break;
         }
     }
-    // ruleaza o optiune, putem scrie o metoda pt fiecare actiune
+
     public void deleteCustomerById() {
         int ID;
         // continuously show all customers, numbered, and choose one of them to delete
-        od.showNumberedEntities(db.customers());
+        od.showNumberedEntities(db.customers(), "The current customers are:");
 
         try {
             int index = id.inputValueInRange(0, db.customers().size() - 1, "Choose the index for the customer you want to delete");

@@ -1,21 +1,17 @@
-package com.amina;
+package com.amina.entities;
 
-import com.amina.entities.Book;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest
+public class OrderItemTest
         extends TestCase {
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public AppTest(String testName) {
+    public OrderItemTest(String testName) {
         super(testName);
     }
 
@@ -23,15 +19,13 @@ public class AppTest
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(AppTest.class);
+        return new TestSuite(OrderItemTest.class);
     }
 
     /**
-     * Rigourous Test
+     * Rigourous Test :-)
      */
-    public void testApp() {
-        Book book = new Book();
-
-        assertFalse(book.toString() != null && book.toString().equals(""));
+    public void test() {
+        
     }
 }

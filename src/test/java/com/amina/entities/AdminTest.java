@@ -1,21 +1,23 @@
-package com.amina;
+package com.amina.entities;
 
+import com.amina.AppTest;
 import com.amina.entities.Book;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- * Unit test for simple App.
- */
-public class AppTest
+import javax.xml.crypto.Data;
+import java.sql.SQLException;
+import java.util.concurrent.ThreadLocalRandom;
+
+public class AdminTest
         extends TestCase {
     /**
      * Create the test case
      *
      * @param testName name of the test case
      */
-    public AppTest(String testName) {
+    public AdminTest(String testName) {
         super(testName);
     }
 
@@ -23,15 +25,13 @@ public class AppTest
      * @return the suite of tests being tested
      */
     public static Test suite() {
-        return new TestSuite(AppTest.class);
+        return new TestSuite(AdminTest.class);
     }
 
     /**
-     * Rigourous Test
+     * Rigourous Test :-)
      */
-    public void testApp() {
-        Book book = new Book();
-
-        assertFalse(book.toString() != null && book.toString().equals(""));
+    public void test() {
+        
     }
 }
