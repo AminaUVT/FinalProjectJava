@@ -5,7 +5,7 @@ import com.amina.OutputDevice;
 import com.amina.db.Database;
 import com.amina.entities.User;
 
-public class Menu {
+public abstract class Menu {
     public Menu() {
     }
 
@@ -21,4 +21,8 @@ public class Menu {
         this.od = new OutputDevice();
         this.user = user;
     }
+
+    public abstract void showOptions() ;
+    public abstract int chooseOption() ;
+    public abstract void run() ;
 }

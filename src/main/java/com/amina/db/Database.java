@@ -7,11 +7,83 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Database {
+    private static String DbConnectionUrl = "";
+
+    public static void setDbConnectionUrl(String dbConnectionUrl) {
+        DbConnectionUrl = dbConnectionUrl;
+    }
+
     private List<Customer> customers;
     private List<Admin> admins;
     private List<OrderItem> orderItems;
     private List<Tea> teas;
     private List<Book> books;
+
+    public static User login(String username, String password) {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            System.out.println("packages named \"com.mysql.jdbc.Driver\" must be " +
+                    "installed (e.g., inside pom.xml)");
+        }
+
+        try {
+
+            Connection conn = DriverManager.getConnection(
+                    Database.DbConnectionUrl
+            );
+
+            Statement stmt1 = conn.createStatement();
+            Statement stmt2 = conn.createStatement();
+
+            ResultSet customers = stmt1.executeQuery(
+                    "select username, password from customers " +
+                            "where username='" + username + "'");
+            ResultSet admins = stmt2.executeQuery(
+                    "select username, password from admins " +
+                            "where username='" + username + "'");
+
+
+            if (!customers.isBeforeFirst()) {
+                // The result set is empty, so we don't have customers with the given name
+            } else {
+                customers.next();// username is unique, so we get to the first and only row in the result
+                String customerPassword = customers.getString("password");
+                if (password != null && password.equals(customerPassword)) {
+                    Customer customer = new Customer();
+                    customer.setUser_id(customers.getInt("user_id"));
+                    customer.setPassword(customers.getString("password"));
+                    customer.setUsername(customers.getString("username"));
+                    return customer;
+                }
+            }
+
+
+            if (!admins.isBeforeFirst()) {
+                // The result set is empty, so we don't have admins with the given name
+            } else {
+                admins.next();// username is unique, so we get to the first and only row in the result
+                String customerPassword = admins.getString("password");
+                if (password != null && password.equals(customerPassword)) {
+                    Admin admin = new Admin();
+//                    admin.setUser_id(admins.getInt("user_id"));
+                    admin.setPassword(admins.getString("password"));
+                    admin.setUsername(admins.getString("username"));
+                    return admin;
+                }
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        // The database search returned no user with this username and password, so we return null.
+        return null;
+
+    }
 
     public List<Customer> customers() {
         return customers;
@@ -79,7 +151,7 @@ public class Database {
 
         try {
             stmt = this.conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from Tea");
+            ResultSet rs = stmt.executeQuery("select * from teas");
             while (rs.next()) {
                 Tea tea = new Tea();
                 // inside the DB user_id is generated automatically,
@@ -93,33 +165,33 @@ public class Database {
 
 
         } catch (SQLException e) {
-            throw new DbConnectionError("Couldn't load data from the table Tea");
+            throw new DbConnectionError("Couldn't load data from the table Teas");
         }
 
         //for Book
 
         try {
             stmt = this.conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from Book");
+            ResultSet rs = stmt.executeQuery("select * from books");
             while (rs.next()) {
                 Book book = new Book();
                 // inside the DB user_id is generated automatically,
                 //  but we still need to load it into our program from the database
                 book.setBook_id(rs.getInt("book_id"));
                 book.setAuthor(rs.getString("author"));
-                book.setBook_title(rs.getString("book_title"));
+                book.setTitle(rs.getString("title"));
                 books.add(book);
             }
 
 
         } catch (SQLException e) {
-            throw new DbConnectionError("Couldn't load data from the table Book");
+            throw new DbConnectionError("Couldn't load data from the table Books");
         }
         //for orderItem
 
         try {
             stmt = this.conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from OrderItem");
+            ResultSet rs = stmt.executeQuery("select * from orderitems");
             while (rs.next()) {
                 OrderItem orderitem = new OrderItem();
                 // inside the DB user_id is generated automatically,
@@ -127,15 +199,15 @@ public class Database {
                 orderitem.setOrder_id(rs.getInt("order_id"));
                 orderitem.setProduct_id(rs.getInt("product_id"));
                 orderitem.setCustomer_id(rs.getInt("customer_id"));
-                orderitem.setCreated_at(rs.getDate("date"));
-                orderitem.setQty(rs.getInt("quantity"));
+                orderitem.setCreated_at(rs.getDate("created_at"));
+                orderitem.setQuantity(rs.getInt("quantity"));
                 orderitem.setUnit_price(rs.getFloat("unit_price"));
                 orderItems.add(orderitem);
             }
 
 
         } catch (SQLException e) {
-            throw new DbConnectionError("Couldn't load data from the table OrderItem");
+            throw new DbConnectionError("Couldn't load data from the table OrderItems");
         }
     }
 
@@ -153,7 +225,8 @@ public class Database {
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.conn = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/final_project", "root", "34213421");
+                    Database.DbConnectionUrl
+            );
 
             // load all data from database
             loadDb();
@@ -164,23 +237,30 @@ public class Database {
     }
 
     public void createCustomer(Customer customer) {
-        Statement stmt = null;
+
         try {
-            stmt = this.conn.createStatement();
-            int iRows = stmt.executeUpdate(
-                    "insert into into table customer (" +
-                            "username, password) " +
-                            " values (" +
-                            customer.getUsername() + "," + customer.getPassword() +
-                            ")  * from customers");
+            PreparedStatement stmt = conn.prepareStatement(
+                    String.format(
+                            "insert into " +
+                                    " customers(username, password)" +
+                                    " values  ('%s', '%s')",
+                            customer.getUsername(), customer.getPassword()),
+                    new String[]{"user_id"});
+
+            int affectedRows = stmt.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating user failed, no rows affected.");
+            }
 
             // using the code below, we check if the insert worked out,
-            //  If it succeeded, we set the user id :D
-            ResultSet generatedKeys = stmt.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                customer.setUser_id(generatedKeys.getInt(1));
-            } else {
-                throw new SQLException("Creating user failed, no ID obtained.");
+            //  If it succeeded, we set the user id
+            try (ResultSet rs = stmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    System.out.println(rs.getInt(1));
+                    customer.setUser_id(rs.getInt(1));
+                }
+                rs.close();
             }
 
             // only after adding the customer to the database:
@@ -195,9 +275,9 @@ public class Database {
 
     public void updateCustomer(int ID, Customer updatedCustomer) {
         String query = "update customers set " +
-                "username=" + updatedCustomer.getUsername() + "," +
-                "password=" + updatedCustomer.getPassword() +
-                "  where customer_id=" + ID;
+                "username='" + updatedCustomer.getUsername() + "'," +
+                "password='" + updatedCustomer.getPassword() + "'" +
+                "  where user_id=" + ID;
 
         try {
             Statement stmt = conn.createStatement();
@@ -207,6 +287,7 @@ public class Database {
             }
             stmt.close();
 
+            //  and also update the values stored inside RAM (the lists inside Database)
             for (int i = 0; i < customers.size(); i++) {
                 if (customers.get(i).getUser_id() == ID) {
                     customers.set(i, updatedCustomer);
@@ -222,7 +303,7 @@ public class Database {
     public void deleteCustomer(int ID) {
         try {
             Statement stmt = conn.createStatement();
-            int iRows = stmt.executeUpdate("delete customers where customer_id=" + ID);
+            int iRows = stmt.executeUpdate("delete from customers where user_id=" + ID);
             if (iRows == 0) {
                 throw new SQLException("No customer with ID=" + ID + " was deleted");
             }

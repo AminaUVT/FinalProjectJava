@@ -10,5 +10,12 @@ public class Admin extends User  {
         super(user_id, username, password);
     }
 
-
+    @Override
+    public String toString() {
+        return String.format("Admin(" +
+                "ID=%s," +
+                "username=%s," +
+                "password=%s" +
+                ")", user_id, username, password);
+    }
 }

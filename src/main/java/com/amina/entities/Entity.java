@@ -1,4 +1,4 @@
 package com.amina.entities;
 
-public class Entity {
+public abstract class Entity {
 }

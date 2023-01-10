@@ -6,9 +6,14 @@ import java.util.List;
 
 public class OutputDevice {
 
-    public void showNumberedEntities(List<? extends Entity> l) {
-        for (int i = 0; i < l.size(); i++) {
-            System.out.println((i+1) + ". " + l.get(i).toString());
+    public void showNumberedEntities(List<? extends Entity> l, String tableName) {
+        if (l.size() == 0) {
+            System.out.println("The DB contains no customers.");
+        } else {
+            System.out.println("List of all " + tableName + ":");
+            for (int i = 0; i < l.size(); i++) {
+                System.out.println(i + ". " + l.get(i).toString());
+            }
         }
     }
 
