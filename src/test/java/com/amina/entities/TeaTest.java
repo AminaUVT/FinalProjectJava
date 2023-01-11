@@ -26,6 +26,14 @@ public class TeaTest
      * Rigourous Test :-)
      */
     public void test() {
-        
+        Tea x = new Tea();
+        x.setTea_id(1);
+        x.setBrand("Treasure Island");
+        x.setFlavor("Unpeeled Oranges");
+        x.setPrice(2);
+        assertEquals(
+                x.toString(),
+                "Book(TEA_ID=1,brand=Treasure Island,flavor=Unpeeled Oranges,price=2.0)"
+        );
     }
 }

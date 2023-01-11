@@ -1,14 +1,8 @@
 package com.amina.entities;
 
-import com.amina.AppTest;
-import com.amina.entities.Book;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import javax.xml.crypto.Data;
-import java.sql.SQLException;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class AdminTest
         extends TestCase {
@@ -32,6 +26,13 @@ public class AdminTest
      * Rigourous Test :-)
      */
     public void test() {
-        
+        Admin x = new Admin();
+        x.setUser_id(1);
+        x.setUsername("Amina");
+        x.setPassword("Parrot");
+        assertEquals(
+                x.toString(),
+                "Admin(ID=1,username=Amina,password=Parrot)"
+                );
     }
 }

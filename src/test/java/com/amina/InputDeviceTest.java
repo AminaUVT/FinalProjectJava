@@ -26,6 +26,14 @@ public class InputDeviceTest
      * Rigourous Test
      */
     public void test() {
-        
+        InputDevice id = new InputDevice();
+
+        assertTrue(id.inputString("Type String:") instanceof String);
+        assertTrue((Boolean)id.inputBoolean("Type Boolean (true/false):") instanceof Boolean);
+        try {
+            assertTrue((Integer)id.inputValueInRange(2, 10, "Type value between 2 and 10:") instanceof Integer);
+        } catch (InputDevice.ValueOutOfRange e) {
+            fail();
+        }
     }
 }

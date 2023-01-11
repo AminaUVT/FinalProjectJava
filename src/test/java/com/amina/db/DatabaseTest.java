@@ -1,12 +1,9 @@
 package com.amina.db;
 
-import com.amina.AppTest;
-import com.amina.entities.Book;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 import java.util.concurrent.ThreadLocalRandom;
 

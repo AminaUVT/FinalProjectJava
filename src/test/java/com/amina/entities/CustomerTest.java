@@ -26,6 +26,14 @@ public class CustomerTest
      * Rigourous Test :-)
      */
     public void test() {
-        
+
+        Customer x = new Customer();
+        x.setUser_id(1);
+        x.setUsername("Treasure Island");
+        x.setPassword("Mark Not Twain");
+        assertEquals(
+                x.toString(),
+                "Customer(ID=1,username=Treasure Island,password=Mark Not Twain)"
+        );
     }
 }

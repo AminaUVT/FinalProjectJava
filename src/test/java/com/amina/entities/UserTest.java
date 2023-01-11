@@ -26,6 +26,13 @@ public class UserTest
      * Rigourous Test :-)
      */
     public void test() {
-        
+        User x = new User();
+        x.setUser_id(1);
+        x.setUsername("Rex");
+        x.setPassword("T-Rex");
+        assertEquals(
+                x.toString(),
+                "User(ID=1,username=Rex,password=T-Rex)"
+        );
     }
 }
